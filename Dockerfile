@@ -1,4 +1,4 @@
-FROM golang:1.13.6-alpine3.11 AS build-gcsfuse
+FROM golang:1.15.2-alpine AS build-gcsfuse
 
 ARG gcsfuse_version
 ARG global_ldflags
@@ -12,6 +12,9 @@ RUN mkdir /tmp/bin
 
 # Install gcsfuse using the specified version or commit hash
 RUN go get -u github.com/googlecloudplatform/gcsfuse
+WORKDIR ${GOPATH}/src/github.com/googlecloudplatform/gcsfuse
+RUN git checkout ${gcsfuse_version}
+WORKDIR ${GOPATH}
 RUN go install github.com/googlecloudplatform/gcsfuse/tools/build_gcsfuse
 RUN mkdir /tmp/gcsfuse
 RUN build_gcsfuse ${GOPATH}/src/github.com/googlecloudplatform/gcsfuse /tmp/gcsfuse ${gcsfuse_version} -ldflags "all=${global_ldflags}" -ldflags "-X main.gcsfuseVersion=${gcsfuse_version} ${global_ldflags}"

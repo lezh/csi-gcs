@@ -93,7 +93,7 @@ spec:
           capabilities:
             add: ["SYS_ADMIN"]
           allowPrivilegeEscalation: true
-        image: docker.io/ofekmeister/csi-gcs:latest
+        image: gcr.io/curious-entropy-222019/csi-gcsfuse:latest
         imagePullPolicy: Always
         args:
         - "--node-name=$(KUBE_NODE_NAME)"
