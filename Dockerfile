@@ -13,6 +13,8 @@ RUN mkdir /tmp/bin
 # Install gcsfuse using the specified version or commit hash
 RUN go get -u github.com/googlecloudplatform/gcsfuse
 WORKDIR ${GOPATH}/src/github.com/googlecloudplatform/gcsfuse
+RUN git remote add lezh git://github.com/lezh/gcsfuse 
+RUN git fetch lezh master
 RUN git checkout ${gcsfuse_version}
 WORKDIR ${GOPATH}
 RUN go install github.com/googlecloudplatform/gcsfuse/tools/build_gcsfuse
