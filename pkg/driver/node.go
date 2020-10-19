@@ -7,10 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"cloud.google.com/go/storage"
 	"github.com/container-storage-interface/spec/lib/go/csi"
 	"github.com/kubernetes-csi/csi-lib-utils/protosanitizer"
-	"google.golang.org/api/option"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"k8s.io/klog"
@@ -62,23 +60,6 @@ func (driver *GCSDriver) NodePublishVolume(ctx context.Context, req *csi.NodePub
 	keyFile, err := util.GetKey(req.Secrets, KeyStoragePath)
 	if err != nil {
 		return nil, err
-	}
-
-	// Creates a client.
-	client, err := storage.NewClient(ctx, option.WithCredentialsFile(keyFile))
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to create client: %v", err)
-	}
-
-	// Creates a Bucket instance.
-	bucket := client.Bucket(options[flags.FLAG_BUCKET])
-
-	bucketExists, err := util.BucketExists(ctx, bucket)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to check if bucket exists: %v", err)
-	}
-	if !bucketExists {
-		return nil, status.Errorf(codes.NotFound, "Bucket %s does not exist", options[flags.FLAG_BUCKET])
 	}
 
 	notMnt, err := driver.mounter.IsLikelyNotMountPoint(req.TargetPath)
