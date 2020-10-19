@@ -2,7 +2,6 @@ package driver
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -56,12 +55,6 @@ func (driver *GCSDriver) NodePublishVolume(ctx context.Context, req *csi.NodePub
 		options = flags.MergeFlags(options, req.VolumeContext)
 	}
 
-	// Retrieve Secret Key
-	keyFile, err := util.GetKey(req.Secrets, KeyStoragePath)
-	if err != nil {
-		return nil, err
-	}
-
 	notMnt, err := driver.mounter.IsLikelyNotMountPoint(req.TargetPath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -78,7 +71,7 @@ func (driver *GCSDriver) NodePublishVolume(ctx context.Context, req *csi.NodePub
 		return &csi.NodePublishVolumeResponse{}, nil
 	}
 
-	mountOptions := []string{fmt.Sprintf("key_file=%s", keyFile), "allow_other"}
+	mountOptions := []string{"allow_other"}
 	mountOptions = append(mountOptions, flags.ExtraFlags(options)...)
 	if req.GetReadonly() {
 		mountOptions = append(mountOptions, "ro")
